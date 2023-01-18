@@ -25,8 +25,7 @@ int main() {
 
   app.bindaddr("127.0.0.1")
       .ssl_file("ssl/server.crt", "ssl/server.key")
-      .port(8081)
-      .loglevel(crow::LogLevel::DEBUG)
+      .port(8082)
       .multithreaded()
       .run();
 }

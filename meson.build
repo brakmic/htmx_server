@@ -19,7 +19,6 @@ cpp_args = [
     '-std=c++20',
 ]
 
-
 triplet = 'x64-osx'
 if os == 'windows'
     triplet = 'x64-mingw-static'
@@ -206,7 +205,14 @@ endif
 
 link_args = ''
 if os == 'windows'
-    link_args = ['-lws2_32', '-lwsock32', '-lssl', '-lcrypto', '-lrpcrt4', '-lcrypt32']
+    link_args = [
+        '-lws2_32',
+        '-lwsock32',
+        '-lssl',
+        '-lcrypto',
+        '-lrpcrt4',
+        '-lcrypt32',
+    ]
 endif
 
 exe = executable(

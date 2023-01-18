@@ -1,6 +1,12 @@
 ### Web server based on CrowCpp and htmx
 
-This web server uses CrowCpp as its backend and htmx on the frontend.
+This web server uses [CrowCpp](https://github.com/CrowCpp/Crow) as its backend and [htmx](https://htmx.org) on the frontend.
+
+C++ in the backend provides fast, native binaries, while htmx on the frontend provides responsive web apps that don't need JS-frameworks.
+
+This reduces code bloat on both sides.
+
+**Notice**: *This project is still in development. There is not much to see in the browser.*
 
 ### Compilation
 
@@ -38,14 +44,13 @@ The two triplet entries will be needed later to instruct `vcpkg` to use MinGW in
 
 * macOS / Linux
 
-Install `brew` package manager and the use it to install meson with `brew install meson`.
+Install `brew` package manager and then use it to install Meson with `brew install meson`.
 
 #### Installing CrowCpp
 
-The easiest way to install the needed packages is by using [vcpkg](https://vcpkg.io/en/index.html). Just type `vcpkg install crow:x64-mingw-static`.
-
-But, don't forget to change `vcpkg_root` in `meson.build` first. This path should point at the previously cloned `vcpkg` repository.
-
+The easiest way to install it is by using [vcpkg](https://vcpkg.io/en/index.html): 
+  * Windows: `vcpkg install crow:x64-mingw-static`
+  * macOS/Linux: `vcpkg install crow`
 ### Meson
 
 My build system of choice is [Meson](https://mesonbuild.com/), because `Makefiles` are hard to maintain and I simply don't want to learn how to use `CMake`. Life is too short for user-hostile software.
@@ -57,19 +62,31 @@ There are two scripts, `buildall.sh` (macOS/Linux) and `buildall.ps1` (Windows).
    * compile sources from `src`
    * put the output binary into `builddir`
 
-A C++20 compiler is needed. I'm using GNU C++ v12.1.0.
-
 Before trying to build the project, please, adapt these two variables in the `meson.build` file:
 
-* [triplet](meson.build#L26)
-* [vcpkg_root](meson.build#L34)
+* [triplet](meson.build#L22)
+* [vcpkg_root](meson.build#L27)
 
 The `triplet` carries the information about the host machine, e.g. `x64-osx`.
 
 The `vcpkg_root` is the root folder containing packages installed by `vcpkg`.
 
-Now you can compile this project via PoweShell with `./buildall.ps1`.
+### Compilation
 
+* Windows: in PowerShell with `./buildall.ps1`
+* macOS/Linux: `./buildall.sh`
+
+### Usage
+
+After a successful compilation, run the htmx_server executable from `builddir`. 
+
+Open the page on https://127.0.0.1:8082
+
+This demo uses SSL by default and the self-signed certificates are included.
+
+![htmx_server_macos](images/htmx_server_macos.png)
+
+![htmx_server_win](images/htmx_server_win.png)
 ## LICENSE
 
 [MIT](LICENSE)

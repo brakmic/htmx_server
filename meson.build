@@ -36,11 +36,13 @@ src_root = 'src'
 ssl_keys_root = 'ssl'
 mingw_root = 'C:/bin/msys64/mingw64'
 mingw_includes = join_paths(mingw_root, 'include')
+posix_includes = ''
 mingw_libs = join_paths(mingw_root, 'lib')
 if os != 'windows'
     mingw_root = ''
     mingw_includes = ''
     mingw_libs = ''
+    posix_includes = '/usr/local/include'
 endif
 
 vendor_dir = 'vendor'
@@ -91,7 +93,7 @@ endif
 
 
 incdir = include_directories(
-    '/usr/local/include',
+    posix_includes,
     mingw_includes,
     vcpkg_packages + '/crow_' + triplet + '/include/',
     vcpkg_packages + '/boost-asio_' + triplet + '/include/',

@@ -1,5 +1,7 @@
 project('htmx_server', 'cpp', version: '0.1')
 
+os = host_machine.system()
+
 cpp_args = [
     '-Wall',
     '-Wextra',
@@ -14,13 +16,10 @@ cpp_args = [
     '-DCROW_ENABLE_SSL',
     '-g3',
     '-ggdb',
-    '-lpthread',
-    '-lssl',
-    '-lcrypto',
     '-std=c++20',
 ]
 
-os = host_machine.system()
+
 triplet = 'x64-osx'
 if os == 'windows'
     triplet = 'x64-mingw-static'
@@ -91,12 +90,20 @@ if os != 'windows'
     )
 endif
 
+windows_includes = [
+    vcpkg_packages + '/boost-align_' + triplet + '/include/',
+    vcpkg_packages + '/boost-winapi_' + triplet + '/include/',
+]
+if os != 'windows'
+    windows_includes = ''
+endif
 
 incdir = include_directories(
     posix_includes,
     mingw_includes,
     vcpkg_packages + '/crow_' + triplet + '/include/',
     vcpkg_packages + '/boost-asio_' + triplet + '/include/',
+    windows_includes,
     vcpkg_packages + '/boost-optional_' + triplet + '/include/',
     vcpkg_packages + '/boost-assert_' + triplet + '/include/',
     vcpkg_packages + '/boost-core_' + triplet + '/include/',
@@ -137,7 +144,7 @@ main_cpp = src_root / 'htmx_server.cpp'
 
 sources = [main_cpp]
 
-libopenssl_path = vcpkg_root / 'packages/openssl_' + triplet + '/lib'
+libopenssl_path = vcpkg_packages + '/openssl_' + triplet + '/lib'
 if os == 'windows'
     libopenssl_path = mingw_libs
 endif
@@ -146,7 +153,7 @@ libopenssl = cpp.find_library(
     dirs: [libopenssl_path],
 )
 
-libcrypto_path = vcpkg_root / 'packages/openssl_' + triplet + '/lib'
+libcrypto_path = vcpkg_packages + '/openssl_' + triplet + '/lib'
 if os == 'windows'
     libcrypto_path = mingw_libs
 endif
@@ -170,7 +177,18 @@ if os == 'windows'
     libcrypt32 = cpp.find_library('crypt32', dirs: [mingw_libs])
 endif
 
+zlib_name = 'z'
+zlib_path = vcpkg_packages + '/zlib_' + triplet + '/lib'
+if os == 'windows'
+    zlib_path = mingw_libs
+endif
+libz = cpp.find_library(
+    zlib_name,
+    dirs: [zlib_path],
+)
+
 deps = [
+    libz,
     libopenssl,
     libcrypto,
 ]
@@ -188,7 +206,7 @@ endif
 
 link_args = ''
 if os == 'windows'
-    link_args = ['-lws2_32', '-lssl', '-lcrypto', '-lrpcrt4', '-lcrypt32']
+    link_args = ['-lws2_32', '-lwsock32', '-lssl', '-lcrypto', '-lrpcrt4', '-lcrypt32']
 endif
 
 exe = executable(
